@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class StudentManager implements StudentManagerInterface{
     @Override
-    public boolean registerStudent(Student student) {
+    public boolean addStudent(Student student) {
         //Get studentList
         ArrayList<Student> studentList = StudentList.getInstance().getStudentList();
         //Check if the student already registered

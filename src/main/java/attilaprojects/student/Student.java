@@ -33,8 +33,7 @@ public class Student {
         this.studentID = studentID;
     }
 
-    @Override
-    public static String toString() {
+    public String makeString(){
         return studentName + "," + studentPassword + "," + studentID;
     }
 

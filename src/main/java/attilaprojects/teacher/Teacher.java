@@ -1,13 +1,14 @@
 package attilaprojects.teacher;
 
+
 import java.util.Objects;
 
 public class Teacher {
     private final String teacherName;
     private String teacherPassword;
-    private int teacherID;
+    private String teacherID;
 
-    public Teacher(String teacherName, String teacherPassword, int teacherID) {
+    public Teacher(String teacherName, String teacherPassword, String teacherID) {
         this.teacherName = teacherName;
         this.teacherPassword = teacherPassword;
         this.teacherID = teacherID;
@@ -25,12 +26,21 @@ public class Teacher {
         this.teacherPassword = teacherPassword;
     }
 
-    public int getTeacherID() {
+    public String getTeacherID() {
         return teacherID;
     }
 
-    public void setTeacherID(int teacherID) {
+    public void setTeacherID(String teacherID) {
         this.teacherID = teacherID;
+    }
+
+    public String makeString(){
+        return teacherName + "," + teacherPassword + "," + teacherID;
+    }
+
+    public static Teacher fromString(String line){
+        String[] parts = line.split(",");
+        return new Teacher(parts[0],parts[1],parts[2]);
     }
 
     @Override
@@ -38,7 +48,7 @@ public class Teacher {
         if (this == o) return true;
         if (!(o instanceof Teacher)) return false;
         Teacher teacher = (Teacher) o;
-        return getTeacherID() == teacher.getTeacherID() && Objects.equals(getTeacherName(), teacher.getTeacherName()) && Objects.equals(getTeacherPassword(), teacher.getTeacherPassword());
+        return Objects.equals(getTeacherID(), teacher.getTeacherID()) && Objects.equals(getTeacherName(), teacher.getTeacherName()) && Objects.equals(getTeacherPassword(), teacher.getTeacherPassword());
     }
 
     @Override

@@ -42,7 +42,7 @@ public class StudentList {
         File studentFile = new File(fileDirectory + "students.txt");
         try (FileWriter fileWriter = new FileWriter(studentFile)){
             for (Student student : studentList){
-                fileWriter.write(Student.toString() + '\n');
+                fileWriter.write(student.makeString() + "\n");
             }
             return true;
         } catch (IOException e) {
