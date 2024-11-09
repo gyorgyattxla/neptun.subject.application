@@ -6,10 +6,12 @@ import attilaprojects.student.StudentList;
 import java.util.ArrayList;
 
 public class StudentManager implements StudentManagerInterface{
+
     @Override
     public boolean addStudent(Student student) {
         //Get studentList
-        ArrayList<Student> studentList = StudentList.getInstance().getStudentList();
+        ArrayList<Student> studentList = new ArrayList<>();
+        studentList = StudentList.getInstance().getStudentList();
         //Check if the student already registered
         for (Student s : studentList) {
             if (s.getStudentName().equals(student.getStudentName()) && s.getStudentPassword().equals(student.getStudentPassword())){

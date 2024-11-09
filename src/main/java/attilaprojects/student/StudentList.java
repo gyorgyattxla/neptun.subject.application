@@ -8,7 +8,7 @@ public class StudentList {
     private ArrayList<Student> studentList;
 
     public StudentList() {
-        this.studentList = studentList;
+        this.studentList = new ArrayList<>();
     }
 
     public static StudentList getInstance() {
@@ -30,7 +30,7 @@ public class StudentList {
 
     public boolean saveStudentList(){
         String userHome = System.getProperty("user.home");
-        File fileDirectory = new File(userHome + "nsas-data"); //set directory
+        File fileDirectory = new File(userHome + "/nsas-data"); //set directory
 
         if (!fileDirectory.exists()){
             boolean mkdirs = fileDirectory.mkdirs();//if the directory does not exist, create it
@@ -39,7 +39,7 @@ public class StudentList {
                 return false;
             }
         }
-        File studentFile = new File(fileDirectory + "students.txt");
+        File studentFile = new File(fileDirectory + "/students.txt");
         try (FileWriter fileWriter = new FileWriter(studentFile)){
             for (Student student : studentList){
                 fileWriter.write(student.makeString() + "\n");
@@ -52,9 +52,9 @@ public class StudentList {
 
     public boolean loadStudentList(){
         String userHome = System.getProperty("user.home");
-        File fileDirectory = new File(userHome + "nsas-data"); //set directory
+        File fileDirectory = new File(userHome + "/nsas-data"); //set directory
 
-        File studentFile = new File(fileDirectory + "students.txt");
+        File studentFile = new File(fileDirectory + "/students.txt");
         if (!studentFile.exists()){
             System.err.println("'students.txt' not found, can't load data.");
             return false;

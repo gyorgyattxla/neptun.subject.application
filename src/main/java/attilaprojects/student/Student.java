@@ -1,11 +1,15 @@
 package attilaprojects.student;
 
+import attilaprojects.classes.Class;
+
 import java.util.Objects;
 
 public class Student {
     private final String studentName;
     private String studentPassword;
     private String studentID;
+
+    //FORGOT THIS TRASH private Class[] joinedClasses;
 
     public Student(String studentName, String studentPassword, String studentID) {
         this.studentName = studentName;
