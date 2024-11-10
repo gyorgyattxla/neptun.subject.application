@@ -8,4 +8,7 @@ public interface StudentManagerInterface {
 
     /*** removeStudent method will remove a Student object from StudentList ***/
     public boolean removeStudent(Student student);
+
+
+    public boolean doesStudentExist(String username, String password);
 }

@@ -40,4 +40,16 @@ public class StudentManager implements StudentManagerInterface{
         //throw exception?
         return false;
     }
+
+    @Override
+    public boolean doesStudentExist(String username, String password) {
+        //Get studentList
+        ArrayList<Student> studentList = StudentList.getInstance().getStudentList();
+        for (Student s : studentList) {
+            if(s.getStudentName().equals(username) && s.getStudentPassword().equals(password)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

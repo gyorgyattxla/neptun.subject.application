@@ -1,5 +1,7 @@
 package attilaprojects.teacher.teachermanager;
 
+import attilaprojects.student.Student;
+import attilaprojects.student.StudentList;
 import attilaprojects.teacher.Teacher;
 import attilaprojects.teacher.TeacherList;
 
@@ -36,6 +38,18 @@ public class TeacherManager implements TeacherManagerInterface{
         }
         //If the teacher does not exist, return false
         //throw exception?
+        return false;
+    }
+
+    @Override
+    public boolean doesTeacherExist(String username, String password) {
+        //Get teacherList
+        ArrayList<Teacher> teacherList = TeacherList.getInstance().getTeacherList();
+        for (Teacher t : teacherList) {
+            if(t.getTeacherName().equals(username) && t.getTeacherPassword().equals(password)){
+                return true;
+            }
+        }
         return false;
     }
 }

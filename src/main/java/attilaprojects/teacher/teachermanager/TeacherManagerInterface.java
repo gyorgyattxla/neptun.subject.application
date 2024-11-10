@@ -7,4 +7,6 @@ public interface TeacherManagerInterface {
 
     /*** removeTeacher method will remove a Teacher object from TeacherList ***/
     public boolean removeTeacher(Teacher teacher);
+
+    public boolean doesTeacherExist(String username, String password);
 }

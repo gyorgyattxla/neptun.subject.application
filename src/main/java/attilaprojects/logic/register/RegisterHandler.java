@@ -2,6 +2,8 @@ package attilaprojects.logic.register;
 
 import attilaprojects.student.Student;
 import attilaprojects.student.studentmanager.StudentManager;
+import attilaprojects.teacher.Teacher;
+import attilaprojects.teacher.teachermanager.TeacherManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +15,7 @@ public class RegisterHandler implements RegisterHandlerInterface{
     private String assignedID = "0001A";
 
     StudentManager studentManager = new StudentManager();
+    TeacherManager teacherManager = new TeacherManager();
 
     public RegisterHandler(){};
 
@@ -79,6 +82,23 @@ public class RegisterHandler implements RegisterHandlerInterface{
             if (idIncremented) return true;
             else {
                 studentManager.removeStudent(student);
+                return false;
+            }
+        }
+        else return false;
+    }
+
+    @Override
+    public boolean registerTeacher(String username, String password) {
+        if (!loadLastAssignedStudentID()) return false;
+
+        Teacher teacher = new Teacher(username,password,assignedID);
+        boolean teacherAdded = teacherManager.addTeacher(teacher);
+        if(teacherAdded){
+            boolean idIncremented = idIncrementer();
+            if (idIncremented) return true;
+            else {
+                teacherManager.removeTeacher(teacher);
                 return false;
             }
         }

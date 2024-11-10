@@ -9,7 +9,7 @@ public class TeacherList {
     private ArrayList<Teacher> teacherList;
 
     public TeacherList() {
-        this.teacherList = teacherList;
+        this.teacherList = new ArrayList<>();
     }
 
     public static TeacherList getInstance() {
@@ -33,7 +33,7 @@ public class TeacherList {
 
     public boolean saveTeacherList(){
         String userHome = System.getProperty("user.home");
-        File fileDirectory = new File(userHome + "nsas-data"); //set directory
+        File fileDirectory = new File(userHome + "/nsas-data"); //set directory
 
         if (!fileDirectory.exists()){
             boolean mkdirs = fileDirectory.mkdirs();//if the directory does not exist, create it
@@ -42,7 +42,7 @@ public class TeacherList {
                 return false;
             }
         }
-        File teacherFile = new File(fileDirectory + "teachers.txt");
+        File teacherFile = new File(fileDirectory + "/teachers.txt");
         try (FileWriter fileWriter = new FileWriter(teacherFile)){
             for (Teacher teacher : teacherList){
                 fileWriter.write(teacher.makeString() + "\n");
@@ -55,9 +55,9 @@ public class TeacherList {
 
     public boolean loadTeacherList(){
         String userHome = System.getProperty("user.home");
-        File fileDirectory = new File(userHome + "nsas-data"); //set directory
+        File fileDirectory = new File(userHome + "/nsas-data"); //set directory
 
-        File teacherFile = new File(fileDirectory + "students.txt");
+        File teacherFile = new File(fileDirectory + "/teachers.txt");
         if (!teacherFile.exists()){
             System.err.println("'teachers.txt' not found, can't load data.");
             return false;
