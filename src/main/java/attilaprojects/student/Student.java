@@ -1,7 +1,5 @@
 package attilaprojects.student;
 
-import attilaprojects.classes.Class;
-
 import java.util.Objects;
 
 public class Student {
@@ -10,6 +8,7 @@ public class Student {
     private String studentID;
 
     //FORGOT THIS TRASH private Class[] joinedClasses;
+    //This made my life ~32x harder probably, but it's too late to change rn
 
     public Student(String studentName, String studentPassword, String studentID) {
         this.studentName = studentName;

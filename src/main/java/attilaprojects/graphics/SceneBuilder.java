@@ -1,6 +1,7 @@
 package attilaprojects.graphics;
 
 
+import attilaprojects.logic.course.CourseHandler;
 import attilaprojects.logic.login.LoginHandler;
 import attilaprojects.logic.register.RegisterHandler;
 import javafx.geometry.Insets;
@@ -22,6 +23,7 @@ public class SceneBuilder {
 
     RegisterHandler registerHandler = new RegisterHandler();
     LoginHandler loginHandler = new LoginHandler();
+    CourseHandler courseHandler = new CourseHandler();
 
     String highlight =  "-fx-border-color: green;" +
             "-fx-border-width: 2px;" +
@@ -199,11 +201,87 @@ public class SceneBuilder {
         Label usernameDisplayer = new Label();
         usernameDisplayer.setText(displayedUsername);
 
+        Button createCourseButton = new Button("Create Course");
+        createCourseButton.setMinSize(175,25);
+        createCourseButton.setMaxSize(175,25);
+        createCourseButton.setStyle(buttonCSS);
+        createCourseButton.setOnAction(e -> primaryStage.setScene(createCourseScene()));
+
         Button logoutButton = new Button("Log out");
+        logoutButton.setMaxSize(175,25);
+        logoutButton.setMinSize(175,25);
         logoutButton.setStyle(buttonCSS);
         logoutButton.setOnAction(e -> primaryStage.setScene(loginScene()));
 
-        layout.getChildren().addAll(usernameDisplayer, titleLabel, logoutButton);
+        layout.getChildren().addAll(usernameDisplayer, titleLabel, createCourseButton, logoutButton);
+        return new Scene(layout,920,520);
+    }
+
+    public Scene createCourseScene(){
+        VBox layout = new VBox(10);
+        layout.setAlignment(Pos.CENTER);
+
+        Label titleLabel = new Label("Create Course");
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        titleLabel.setPadding(new Insets(10));
+
+        TextField courseName = new TextField();
+        courseName.setMaxSize(175,25);
+        courseName.setMinSize(175,25);
+        courseName.setPromptText("Course name...");
+
+        TextField courseTeacher = new TextField();
+        courseTeacher.setMaxSize(175,25);
+        courseTeacher.setMinSize(175,25);
+        courseTeacher.setPromptText("Course teacher...");
+
+        TextField courseCreditNumber = new TextField();
+        courseCreditNumber.setMaxSize(175,25);
+        courseCreditNumber.setMinSize(175,25);
+        courseCreditNumber.setPromptText("Course credit number...");
+
+        TextField courseStartTime = new TextField();
+        courseStartTime.setMaxSize(175,25);
+        courseStartTime.setMinSize(175,25);
+        courseStartTime.setPromptText("Course start hour...");
+
+        TextField courseEndTime = new TextField();
+        courseEndTime.setMaxSize(175,25);
+        courseEndTime.setMinSize(175,25);
+        courseEndTime.setPromptText("Course end hour...");
+
+        Label errorMassage = new Label();
+        errorMassage.setStyle(errorMassageCSS);
+
+        Button createCourse = new Button("Create");
+        createCourse.setMaxSize(175,25);
+        createCourse.setMinSize(175,25);
+        createCourse.setStyle(buttonCSS);
+        createCourse.setOnAction(e -> {
+            String name = courseName.getText();
+            String teacher = courseTeacher.getText();
+            String credit = courseCreditNumber.getText();
+            String start = courseStartTime.getText();
+            String end = courseEndTime.getText();
+            boolean courseAdded = courseHandler.addCourse(name,teacher, Integer.parseInt(credit),start,end);
+            if (courseAdded){
+                primaryStage.setScene(teacherHomeScene());
+            }
+            else{
+                errorMassage.setText("Failed to create course.");
+            }
+        });
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setMaxSize(175,25);
+        cancelButton.setMinSize(175,25);
+        cancelButton.setStyle(buttonCSS);
+        cancelButton.setOnAction(e -> {
+            primaryStage.setScene(teacherHomeScene());
+        });
+
+        layout.getChildren().addAll(titleLabel, courseName, courseTeacher,
+                courseCreditNumber, courseStartTime, courseEndTime, createCourse,
+                cancelButton);
         return new Scene(layout,920,520);
     }
 }

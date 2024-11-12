@@ -1,5 +1,6 @@
 package attilaprojects;
 
+import attilaprojects.classes.CourseList;
 import attilaprojects.graphics.SceneBuilder;
 import attilaprojects.student.StudentList;
 import attilaprojects.teacher.TeacherList;
@@ -15,6 +16,7 @@ public class MainApp extends Application {
 
         StudentList.getInstance().loadStudentList();
         TeacherList.getInstance().loadTeacherList();
+        CourseList.getInstance().loadCourseList();
 
         SceneBuilder sceneBuilder = new SceneBuilder(primaryStage);
         primaryStage.setScene(sceneBuilder.loginScene());
@@ -24,12 +26,14 @@ public class MainApp extends Application {
         primaryStage.setOnCloseRequest(WindowEvent -> {
             StudentList.getInstance().saveStudentList();
             TeacherList.getInstance().saveTeacherList();
+            CourseList.getInstance().saveCourseList();
         });
     }
     public static void main( String[] args )
     {
         StudentList studentList = new StudentList();
         TeacherList teacherList = new TeacherList();
+        CourseList courseList = new CourseList();
         launch(args);
     }
 
