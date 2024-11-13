@@ -1,6 +1,7 @@
 package attilaprojects.graphics;
 
 
+import attilaprojects.classes.Course;
 import attilaprojects.logic.course.CourseHandler;
 import attilaprojects.logic.login.LoginHandler;
 import attilaprojects.logic.register.RegisterHandler;
@@ -8,8 +9,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 
 
 public class SceneBuilder {
@@ -83,7 +88,7 @@ public class SceneBuilder {
             boolean successfulLogin = loginHandler.loginAsTeacher(username,password);
             if(successfulLogin){
                 displayedUsername = usernameField.getText();
-                primaryStage.setScene(teacherHomeScene());
+                primaryStage.setScene(teacherScene());
             }
             else errorMassage.setText("Incorrect username or password.");
 
@@ -190,16 +195,54 @@ public class SceneBuilder {
         return new Scene(layout,920,520);
     }
 
-    public Scene teacherHomeScene(){
-        VBox layout = new VBox(10);
-        layout.setAlignment(Pos.CENTER);
+    public Scene teacherScene(){
+        Label topLabel = new Label(displayedUsername);
+        topLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        Button logoutButton = new Button("Log out");
+        logoutButton.setMaxSize(175,25);
+        logoutButton.setMinSize(175,25);
+        logoutButton.setStyle(buttonCSS);
+        logoutButton.setOnAction(e -> primaryStage.setScene(loginScene()));
 
-        Label titleLabel = new Label("Teacher Home Screen");
-        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-        titleLabel.setPadding(new Insets(10));
+        HBox topLayout = new HBox(10, topLabel, logoutButton);
+        topLayout.setAlignment(Pos.TOP_LEFT);
+        topLayout.setPadding(new Insets(10));
 
-        Label usernameDisplayer = new Label();
-        usernameDisplayer.setText(displayedUsername);
+        Label centerLabel = new Label("My Courses");
+
+        VBox courseContainer = new VBox(10);
+        courseContainer.setPadding(new Insets(10));
+        courseContainer.setAlignment(Pos.CENTER);
+
+        ArrayList<Course> taughtCoursesList = courseHandler.showTeacherCourses(displayedUsername);
+        if (taughtCoursesList != null){
+            for (Course c : taughtCoursesList){
+                Label taughtCourseLabel = new Label();
+                taughtCourseLabel.setText("Class Name: "+c.getClassName()+'\n'+
+                        "Class Teacher: "+c.getClassTeacher()+'\n'+
+                        "Credit Number: "+c.getCreditNumber()+'\n'+
+                        "Class Start Time: "+c.getClassStartTime()+'\n'+
+                        "Class End Time: "+c.getClassEndTime());
+                taughtCourseLabel.setMinWidth(300);
+                taughtCourseLabel.setStyle("-fx-padding: 5; " +
+                        "-fx-background-color: #f0f0f0; " +
+                        "-fx-border-color: #dcdcdc;");
+                courseContainer.getChildren().add(taughtCourseLabel);
+            }
+        }
+
+        VBox centeredCourseContainer = new VBox(courseContainer);
+        centeredCourseContainer.setAlignment(Pos.CENTER);   //wtf why
+
+        ScrollPane scrollPane = new ScrollPane(centeredCourseContainer);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        scrollPane.setMinWidth(350);
+        scrollPane.setMaxWidth(350);
+
+        VBox centerLayout = new VBox(10, centerLabel, scrollPane);
+        centerLayout.setAlignment(Pos.CENTER);
+        centerLayout.setPadding(new Insets(10));
 
         Button createCourseButton = new Button("Create Course");
         createCourseButton.setMinSize(175,25);
@@ -207,14 +250,20 @@ public class SceneBuilder {
         createCourseButton.setStyle(buttonCSS);
         createCourseButton.setOnAction(e -> primaryStage.setScene(createCourseScene()));
 
-        Button logoutButton = new Button("Log out");
-        logoutButton.setMaxSize(175,25);
-        logoutButton.setMinSize(175,25);
-        logoutButton.setStyle(buttonCSS);
-        logoutButton.setOnAction(e -> primaryStage.setScene(loginScene()));
+        Button removeCourseButton = new Button("Remove Course");
+        removeCourseButton.setMinSize(175,25);
+        removeCourseButton.setMaxSize(175,25);
+        removeCourseButton.setStyle(buttonCSS);
 
-        layout.getChildren().addAll(usernameDisplayer, titleLabel, createCourseButton, logoutButton);
-        return new Scene(layout,920,520);
+        HBox bottomLayout = new HBox(10, createCourseButton, removeCourseButton);
+        bottomLayout.setAlignment(Pos.CENTER);
+        bottomLayout.setPadding(new Insets(10));
+
+        BorderPane mainLayout = new BorderPane();
+        mainLayout.setTop(topLayout);
+        mainLayout.setCenter(centerLayout);
+        mainLayout.setBottom(bottomLayout);
+        return new Scene(mainLayout, 920,520);
     }
 
     public Scene createCourseScene(){
@@ -265,7 +314,7 @@ public class SceneBuilder {
             String end = courseEndTime.getText();
             boolean courseAdded = courseHandler.addCourse(name,teacher, Integer.parseInt(credit),start,end);
             if (courseAdded){
-                primaryStage.setScene(teacherHomeScene());
+                primaryStage.setScene(teacherScene());
             }
             else{
                 errorMassage.setText("Failed to create course.");
@@ -276,12 +325,40 @@ public class SceneBuilder {
         cancelButton.setMinSize(175,25);
         cancelButton.setStyle(buttonCSS);
         cancelButton.setOnAction(e -> {
-            primaryStage.setScene(teacherHomeScene());
+            primaryStage.setScene((teacherScene()));
         });
 
         layout.getChildren().addAll(titleLabel, courseName, courseTeacher,
                 courseCreditNumber, courseStartTime, courseEndTime, createCourse,
                 cancelButton);
+        return new Scene(layout,920,520);
+    }
+
+
+    public Scene teachSceneV1(){
+        VBox layout = new VBox(10);
+        layout.setAlignment(Pos.CENTER);
+
+        Label titleLabel = new Label("Teacher Home Screen");
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        titleLabel.setPadding(new Insets(10));
+
+        Label usernameDisplayer = new Label();
+        usernameDisplayer.setText(displayedUsername);
+
+        Button createCourseButton = new Button("Create Course");
+        createCourseButton.setMinSize(175,25);
+        createCourseButton.setMaxSize(175,25);
+        createCourseButton.setStyle(buttonCSS);
+        createCourseButton.setOnAction(e -> primaryStage.setScene(createCourseScene()));
+
+        Button logoutButton = new Button("Log out");
+        logoutButton.setMaxSize(175,25);
+        logoutButton.setMinSize(175,25);
+        logoutButton.setStyle(buttonCSS);
+        logoutButton.setOnAction(e -> primaryStage.setScene(loginScene()));
+
+        layout.getChildren().addAll(usernameDisplayer, titleLabel, createCourseButton, logoutButton);
         return new Scene(layout,920,520);
     }
 }

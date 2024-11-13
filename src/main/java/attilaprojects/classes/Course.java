@@ -17,9 +17,24 @@ public class Course {
         this.classStartTime = classStartTime;
         this.classEndTime = classEndTime;
     }
-
     public String getClassName() {
         return className;
+    }
+
+    public String getClassTeacher() {
+        return classTeacher;
+    }
+
+    public int getCreditNumber() {
+        return creditNumber;
+    }
+
+    public String getClassStartTime() {
+        return classStartTime;
+    }
+
+    public String getClassEndTime() {
+        return classEndTime;
     }
 
     public String makeString(){
