@@ -1,8 +1,8 @@
 package attilaprojects.logic.course;
 
-import attilaprojects.classes.Course;
-import attilaprojects.classes.CourseList;
-import attilaprojects.classes.classmanager.CourseManager;
+import attilaprojects.course.Course;
+import attilaprojects.course.CourseList;
+import attilaprojects.course.coursemanager.CourseManager;
 
 import java.util.ArrayList;
 

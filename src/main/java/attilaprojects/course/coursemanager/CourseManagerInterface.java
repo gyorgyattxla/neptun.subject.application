@@ -1,6 +1,6 @@
-package attilaprojects.classes.classmanager;
+package attilaprojects.course.coursemanager;
 
-import attilaprojects.classes.Course;
+import attilaprojects.course.Course;
 
 public interface CourseManagerInterface {
     /*** When a Teacher logs in, a 'Create Course' button is shown.

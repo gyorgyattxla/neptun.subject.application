@@ -1,8 +1,11 @@
 package attilaprojects.graphics;
 
 
-import attilaprojects.classes.Course;
+import attilaprojects.course.Course;
+import attilaprojects.course.CourseList;
+import attilaprojects.course.courseenrollment.Enrollment;
 import attilaprojects.logic.course.CourseHandler;
+import attilaprojects.logic.course.enrollment.EnrollmentHandler;
 import attilaprojects.logic.login.LoginHandler;
 import attilaprojects.logic.register.RegisterHandler;
 import javafx.geometry.Insets;
@@ -29,6 +32,7 @@ public class SceneBuilder {
     RegisterHandler registerHandler = new RegisterHandler();
     LoginHandler loginHandler = new LoginHandler();
     CourseHandler courseHandler = new CourseHandler();
+    EnrollmentHandler enrollmentHandler = new EnrollmentHandler();
 
     String highlight =  "-fx-border-color: green;" +
             "-fx-border-width: 2px;" +
@@ -72,7 +76,7 @@ public class SceneBuilder {
             boolean successfulLogin = loginHandler.loginAsStudent(username,password);
             if(successfulLogin){
                 displayedUsername = usernameField.getText();
-                primaryStage.setScene(studentHomeScene());
+                primaryStage.setScene(studentTestScene());
             }
             else errorMassage.setText("Incorrect username or password.");
 
@@ -176,7 +180,7 @@ public class SceneBuilder {
         return new Scene(layout,920,520);
     }
 
-    public Scene studentHomeScene(){
+    public Scene studentScene(){
         VBox layout = new VBox(10);
         layout.setAlignment(Pos.CENTER);
 
@@ -334,31 +338,111 @@ public class SceneBuilder {
         return new Scene(layout,920,520);
     }
 
-
-    public Scene teachSceneV1(){
-        VBox layout = new VBox(10);
-        layout.setAlignment(Pos.CENTER);
-
-        Label titleLabel = new Label("Teacher Home Screen");
-        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-        titleLabel.setPadding(new Insets(10));
-
-        Label usernameDisplayer = new Label();
-        usernameDisplayer.setText(displayedUsername);
-
-        Button createCourseButton = new Button("Create Course");
-        createCourseButton.setMinSize(175,25);
-        createCourseButton.setMaxSize(175,25);
-        createCourseButton.setStyle(buttonCSS);
-        createCourseButton.setOnAction(e -> primaryStage.setScene(createCourseScene()));
-
+    public Scene studentTestScene(){
+        Label topLabel = new Label(displayedUsername);
+        topLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
         Button logoutButton = new Button("Log out");
         logoutButton.setMaxSize(175,25);
         logoutButton.setMinSize(175,25);
         logoutButton.setStyle(buttonCSS);
         logoutButton.setOnAction(e -> primaryStage.setScene(loginScene()));
 
-        layout.getChildren().addAll(usernameDisplayer, titleLabel, createCourseButton, logoutButton);
-        return new Scene(layout,920,520);
+        HBox topLeftBox = new HBox(10, topLabel, logoutButton);
+        topLeftBox.setAlignment(Pos.TOP_LEFT);
+        topLeftBox.setPadding(new Insets(10));
+
+        Label leftLabel = new Label("My Courses");
+        VBox leftContent = new VBox();
+        leftContent.setPadding(new Insets(10));
+
+        VBox enrolledCourseContainer = new VBox(10);
+        enrolledCourseContainer.setPadding(new Insets(10));
+        enrolledCourseContainer.setAlignment(Pos.CENTER);
+
+        ArrayList<Course> enrolledCourses = enrollmentHandler.showStudentCourses(displayedUsername);
+        if(enrolledCourses!=null){
+            for (Course c : enrolledCourses){
+                Label enrolledCoursesLabel = new Label();
+                enrolledCoursesLabel.setText("Class Name: "+c.getClassName()+'\n'+
+                        "Class Teacher: "+c.getClassTeacher()+'\n'+
+                        "Credit Number: "+c.getCreditNumber()+'\n'+
+                        "Class Start Time: "+c.getClassStartTime()+'\n'+
+                        "Class End Time: "+c.getClassEndTime());
+                enrolledCoursesLabel.setMinWidth(300);
+                enrolledCoursesLabel.setStyle("-fx-padding: 5; " +
+                        "-fx-background-color: #f0f0f0; " +
+                        "-fx-border-color: #dcdcdc;");
+                enrolledCourseContainer.getChildren().add(enrolledCoursesLabel);
+            }
+        }
+
+        leftContent.getChildren().addAll(leftLabel, enrolledCourseContainer);
+
+        ScrollPane leftScrollPane = new ScrollPane(leftContent);
+        leftScrollPane.setFitToWidth(true);
+        leftScrollPane.setPrefSize(400, 400);
+
+        VBox leftSection = new VBox(5, leftLabel, leftScrollPane);
+        leftSection.setPadding(new Insets(10));
+        leftSection.setPrefWidth(400);
+
+        VBox allCourseContainer = new VBox(10);
+        allCourseContainer.setPadding(new Insets(10));
+        allCourseContainer.setAlignment(Pos.CENTER);
+
+        ArrayList<Course> allCourses = CourseList.getInstance().getCourseList();
+        for (Course c : allCourses){
+            Label allCoursesLabel = new Label();
+            allCoursesLabel.setText("Class Name: "+c.getClassName()+'\n'+
+                    "Class Teacher: "+c.getClassTeacher()+'\n'+
+                    "Credit Number: "+c.getCreditNumber()+'\n'+
+                    "Class Start Time: "+c.getClassStartTime()+'\n'+
+                    "Class End Time: "+c.getClassEndTime());
+            allCoursesLabel.setMinWidth(300);
+            allCoursesLabel.setStyle("-fx-padding: 5; " +
+                    "-fx-background-color: #f0f0f0; " +
+                    "-fx-border-color: #dcdcdc;");
+            allCourseContainer.getChildren().add(allCoursesLabel);
+        }
+
+        // Right section: Label above ScrollPane
+        Label rightLabel = new Label("All Courses");
+        TextField inputField = new TextField();
+        inputField.setMinSize(175,25);
+        inputField.setMaxSize(175,25);
+        inputField.setPromptText("Enter course name...");
+
+        Button addButton = new Button("Enroll");
+        addButton.setStyle(buttonCSS);
+        addButton.setOnAction(e -> {
+            String courseName = inputField.getText();
+            enrollmentHandler.addEnrollment(displayedUsername,courseName);
+        });
+
+        HBox rightTopBox = new HBox(5, rightLabel, inputField, addButton);
+        rightTopBox.setAlignment(Pos.CENTER_LEFT);
+        rightTopBox.setPadding(new Insets(10));
+
+        VBox rightContent = new VBox(allCourseContainer);
+        rightContent.setPadding(new Insets(10));
+
+        ScrollPane rightScrollPane = new ScrollPane(rightContent);
+        rightScrollPane.setFitToWidth(true);
+        rightScrollPane.setPrefSize(400, 400);
+
+        VBox rightSection = new VBox(5, rightTopBox, rightScrollPane);
+        rightSection.setPadding(new Insets(10));
+        rightSection.setPrefWidth(400);
+
+        // Center layout: Split sections 50%-50%
+        HBox centerContent = new HBox(10, leftSection, rightSection);
+        centerContent.setAlignment(Pos.CENTER);
+        centerContent.setPadding(new Insets(10));
+
+        // Main layout with BorderPane
+        BorderPane mainLayout = new BorderPane();
+        mainLayout.setTop(topLeftBox);
+        mainLayout.setCenter(centerContent);
+        return new Scene(mainLayout,920,520);
     }
 }

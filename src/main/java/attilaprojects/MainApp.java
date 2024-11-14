@@ -1,13 +1,13 @@
 package attilaprojects;
 
-import attilaprojects.classes.CourseList;
+import attilaprojects.course.CourseList;
+import attilaprojects.course.courseenrollment.EnrollmentList;
 import attilaprojects.graphics.SceneBuilder;
 import attilaprojects.student.StudentList;
 import attilaprojects.teacher.TeacherList;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class MainApp extends Application {
     @Override
@@ -17,6 +17,7 @@ public class MainApp extends Application {
         StudentList.getInstance().loadStudentList();
         TeacherList.getInstance().loadTeacherList();
         CourseList.getInstance().loadCourseList();
+        EnrollmentList.getInstance().loadStudentList();
 
         SceneBuilder sceneBuilder = new SceneBuilder(primaryStage);
         primaryStage.setScene(sceneBuilder.loginScene());
@@ -27,13 +28,11 @@ public class MainApp extends Application {
             StudentList.getInstance().saveStudentList();
             TeacherList.getInstance().saveTeacherList();
             CourseList.getInstance().saveCourseList();
+            EnrollmentList.getInstance().saveEnrollmentList();
         });
     }
     public static void main( String[] args )
     {
-        StudentList studentList = new StudentList();
-        TeacherList teacherList = new TeacherList();
-        CourseList courseList = new CourseList();
         launch(args);
     }
 

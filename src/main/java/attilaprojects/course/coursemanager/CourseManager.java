@@ -1,7 +1,7 @@
-package attilaprojects.classes.classmanager;
+package attilaprojects.course.coursemanager;
 
-import attilaprojects.classes.Course;
-import attilaprojects.classes.CourseList;
+import attilaprojects.course.Course;
+import attilaprojects.course.CourseList;
 
 import java.util.ArrayList;
 

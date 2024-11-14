@@ -1,4 +1,4 @@
-package attilaprojects.classes;
+package attilaprojects.course;
 
 public class Course {
     private String className;

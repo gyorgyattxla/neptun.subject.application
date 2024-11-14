@@ -1,4 +1,4 @@
-package attilaprojects.classes;
+package attilaprojects.course;
 
 import java.io.*;
 import java.util.ArrayList;
