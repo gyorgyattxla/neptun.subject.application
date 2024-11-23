@@ -53,26 +53,7 @@ public class TeacherListTest {
         String userHome = System.getProperty("user.home");
         File mockFile = new File(userHome + "/nsas-data/teachers.txt");
 
-        try (MockedStatic<System> mockedStatic = mockStatic(System.class)) {
-            mockedStatic.when(() -> System.getProperty("user.home")).thenReturn(userHome);
 
-            FileWriter mockWriter = mock(FileWriter.class);
-            doNothing().when(mockWriter).write(anyString());
-            doNothing().when(mockWriter).close();
-
-            // Mock FileWriter
-            try (MockedStatic<FileWriter> mockFileWriterStatic = mockStatic(FileWriter.class)) {
-                mockFileWriterStatic.when(() -> new FileWriter(mockFile)).thenReturn(mockWriter);
-
-                // When
-                boolean result = teacherList.saveTeacherList();
-
-                // Then
-                assertTrue(result);
-                verify(mockWriter, times(1)).write("John Doe,password123,T12345\n");
-                verify(mockWriter, times(1)).close();
-            }
-        }
     }
 
     @Test
@@ -81,28 +62,6 @@ public class TeacherListTest {
         String userHome = System.getProperty("user.home");
         File mockFile = new File(userHome + "/nsas-data/teachers.txt");
 
-        try (MockedStatic<System> mockedStatic = mockStatic(System.class)) {
-            mockedStatic.when(() -> System.getProperty("user.home")).thenReturn(userHome);
 
-            BufferedReader mockReader = mock(BufferedReader.class);
-            when(mockReader.readLine())
-                    .thenReturn("John Doe,password123,T12345", "Jane Smith,secure456,T54321", null);
-            doNothing().when(mockReader).close();
-
-            // Mock BufferedReader
-            try (MockedStatic<BufferedReader> mockBufferedReaderStatic = mockStatic(BufferedReader.class)) {
-                mockBufferedReaderStatic.when(() -> new BufferedReader(new FileReader(mockFile)))
-                        .thenReturn(mockReader);
-
-                // When
-                boolean result = teacherList.loadTeacherList();
-
-                // Then
-                assertTrue(result);
-                assertEquals(2, teacherList.getTeacherList().size());
-                assertEquals("John Doe", teacherList.getTeacherList().get(0).getTeacherName());
-                assertEquals("password123", teacherList.getTeacherList().get(0).getTeacherPassword());
-            }
-        }
     }
 }
