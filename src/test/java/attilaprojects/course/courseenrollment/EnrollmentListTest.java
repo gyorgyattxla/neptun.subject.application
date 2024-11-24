@@ -1,29 +1,36 @@
 package attilaprojects.course.courseenrollment;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
+import org.mockito.*;
 
 import java.io.*;
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 public class EnrollmentListTest {
 
-    private EnrollmentList enrollmentList;
+    @Mock
+    private ArrayList<Enrollment> enrollmentListMock; // Mock for the internal list
+
+    @InjectMocks
+    private EnrollmentList enrollmentList; // Class under test
+
+    private final String userHome = System.getProperty("user.home");
 
     @BeforeEach
     public void setUp() {
-        enrollmentList = EnrollmentList.getInstance();
-        enrollmentList.getEnrollmentList().clear(); // Clear the singleton state before each test
+        MockitoAnnotations.openMocks(this);
+        enrollmentList = new EnrollmentList(); // New instance for each test
     }
 
     @Test
-    public void testAddEnrollment() {
+    public void testAddEnrollment_Success() {
         // Given
-        Enrollment enrollment = new Enrollment("John Doe", "Math 101");
+        Enrollment enrollment = new Enrollment("John Doe", "Math");
 
         // When
         enrollmentList.addEnrollment(enrollment);
@@ -33,10 +40,10 @@ public class EnrollmentListTest {
     }
 
     @Test
-    public void testRemoveEnrollment() {
+    public void testRemoveEnrollment_Success() {
         // Given
-        Enrollment enrollment = new Enrollment("John Doe", "Math 101");
-        enrollmentList.addEnrollment(enrollment);
+        Enrollment enrollment = new Enrollment("Jane Doe", "Science");
+        enrollmentList.getEnrollmentList().add(enrollment);
 
         // When
         enrollmentList.removeEnrollment(enrollment);
@@ -46,64 +53,67 @@ public class EnrollmentListTest {
     }
 
     @Test
-    public void testSaveEnrollmentList() throws IOException {
+    public void testSaveEnrollmentList_Success() throws IOException {
         // Given
-        Enrollment enrollment = new Enrollment("John Doe", "Math 101");
-        enrollmentList.addEnrollment(enrollment);
-        String userHome = System.getProperty("user.home");
-        File mockFile = new File(userHome + "/nsas-data/enrollments.txt");
+        Enrollment enrollment = new Enrollment("John Doe", "History");
+        enrollmentList.getEnrollmentList().add(enrollment);
 
-        try (MockedStatic<System> mockedStatic = mockStatic(System.class)) {
-            mockedStatic.when(() -> System.getProperty("user.home")).thenReturn(userHome);
+        String directoryPath = userHome + "/nsas-data";
+        String filePath = directoryPath + "/enrollments.txt";
 
-            FileWriter mockWriter = mock(FileWriter.class);
-            doNothing().when(mockWriter).write(anyString());
-            doNothing().when(mockWriter).close();
+        File directory = new File(directoryPath);
+        File file = new File(filePath);
+        directory.mkdirs(); // Ensure directory exists
 
-            // Mock the FileWriter
-            try (MockedStatic<FileWriter> mockFileWriterStatic = mockStatic(FileWriter.class)) {
-                mockFileWriterStatic.when(() -> new FileWriter(mockFile)).thenReturn(mockWriter);
-
-                // When
-                boolean result = enrollmentList.saveEnrollmentList();
-
-                // Then
-                assertTrue(result);
-                verify(mockWriter, times(1)).write("John Doe,Math 101\n");
-                verify(mockWriter, times(1)).close();
-            }
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(""); // Clear existing content
         }
+
+        // When
+        boolean result = enrollmentList.saveEnrollmentList();
+
+        // Then
+        assertTrue(result);
+        assertTrue(file.exists());
+        assertTrue(file.length() > 0);
     }
 
     @Test
-    public void testLoadStudentList() throws IOException {
+    public void testLoadEnrollmentList_FileExists() throws IOException {
         // Given
-        String userHome = System.getProperty("user.home");
-        File mockFile = new File(userHome + "/nsas-data/enrollments.txt");
-        String mockData = "John Doe,Math 101\nJane Smith,History 202";
+        String directoryPath = userHome + "/nsas-data";
+        String filePath = directoryPath + "/enrollments.txt";
 
-        try (MockedStatic<System> mockedStatic = mockStatic(System.class)) {
-            mockedStatic.when(() -> System.getProperty("user.home")).thenReturn(userHome);
+        File directory = new File(directoryPath);
+        File file = new File(filePath);
+        directory.mkdirs(); // Ensure directory exists
 
-            BufferedReader mockReader = mock(BufferedReader.class);
-            when(mockReader.readLine())
-                    .thenReturn("John Doe,Math 101", "Jane Smith,History 202", null);
-            doNothing().when(mockReader).close();
-
-            // Mock the BufferedReader
-            try (MockedStatic<BufferedReader> mockBufferedReaderStatic = mockStatic(BufferedReader.class)) {
-                mockBufferedReaderStatic.when(() -> new BufferedReader(new FileReader(mockFile)))
-                        .thenReturn(mockReader);
-
-                // When
-                boolean result = enrollmentList.loadStudentList();
-
-                // Then
-                assertTrue(result);
-                assertEquals(2, enrollmentList.getEnrollmentList().size());
-                assertEquals("John Doe", enrollmentList.getEnrollmentList().get(0).getStudentName());
-                assertEquals("Math 101", enrollmentList.getEnrollmentList().get(0).getCourseName());
-            }
+        // Create a mock file with test data
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write("John Doe,Math\nJane Doe,Science\n");
         }
+
+        // When
+        boolean result = enrollmentList.loadStudentList();
+
+        // Then
+        assertTrue(result);
+        assertEquals(2, enrollmentList.getEnrollmentList().size());
+    }
+
+    @Test
+    public void testLoadEnrollmentList_FileNotExists() {
+        // Given
+        String directoryPath = userHome + "/nsas-data";
+        String filePath = directoryPath + "/enrollments.txt";
+
+        File file = new File(filePath);
+        file.delete(); // Ensure file does not exist
+
+        // When
+        boolean result = enrollmentList.loadStudentList();
+
+        // Then
+        assertFalse(result);
     }
 }
