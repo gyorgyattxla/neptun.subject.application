@@ -1,20 +1,20 @@
-pipeline{
+pipeline {
     agent any
-    stages{
-        stage('Check Maven version'){
-            steps{
-                sh '-maven version'
+    stages {
+        stage('Check Maven Version') {
+            steps {
+                sh 'mvn -version'
             }
         }
-        stage('Package'){
-            steps{
-                sh 'mvm package'
+        stage('Package') {
+            steps {
+                sh 'mvn package'
                 archiveArtifacts artifacts: '**/target/*.war'
             }
         }
     }
-    post{
-        always{
+    post {
+        always {
             junit '**/target/surefire-reports/junitreports/*'
         }
     }
