@@ -1,6 +1,6 @@
 name: CI/CD Pipeline
 
-# Trigger on pushes to the main branch
+# Trigger on pushes to the main branch and pull requests
 on:
   push:
     branches:
@@ -24,9 +24,17 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Build and Test
-        run: mvn clean install
+      # Cache Maven dependencies
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
+      - name: Build and Test
+        run: mvn clean install -X
 
   deploy:
     runs-on: ubuntu-latest
@@ -37,6 +45,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Deploy
+      # Deployment step (replace with your actual deployment command)
       - name: Deploy application
         run: echo "Deploying application..."
