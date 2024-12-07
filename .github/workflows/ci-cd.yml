@@ -26,8 +26,8 @@ jobs:
 
       - name: Build and Test
         run: |
-          mvn clean install    # Compiles and packages the application
-          mvn test             # Runs tests
+          mvn clean install
+          mvn test -X
 
 
   deploy:
