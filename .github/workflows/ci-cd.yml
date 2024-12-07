@@ -45,6 +45,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Deployment step (replace with your actual deployment command)
+      # Deployment step
       - name: Deploy application
         run: echo "Deploying application..."
