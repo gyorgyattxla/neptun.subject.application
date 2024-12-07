@@ -12,27 +12,22 @@ on:
 # Define jobs
 jobs:
   build:
-    runs-on: ubuntu-latest  # Use Ubuntu as the build environment
+    runs-on: ubuntu-latest
 
     steps:
-      # Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Java
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin' # OpenJDK distribution
-          java-version: '21'      # Replace with the Java version you need
+          distribution: 'temurin'
+          java-version: '21'
 
-      # Install dependencies
-      - name: Install dependencies
-        run: npm install
+      - name: Build and Test
+        run:   mvn clean package
+               mvn test
 
-      # Run tests
-      - name: Run tests
-        run: npm test
 
   deploy:
     runs-on: ubuntu-latest
